@@ -13,9 +13,11 @@ spec:
         app: wisecow
     spec:
       containers:
-        - name: <ECR_IMAGE_URI>
+        - name: wisecow
+          image: <ECR_IMAGE_URI>
           ports:
             - containerPort: 4499
+
 
 
 
