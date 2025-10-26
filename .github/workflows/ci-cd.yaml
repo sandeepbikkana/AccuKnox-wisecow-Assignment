@@ -40,6 +40,16 @@ jobs:
 
       - name: Update kubeconfig for EKS
         run: aws eks update-kubeconfig --region $AWS_REGION --name $EKS_CLUSTER_NAME
+      - name: Install NGINX Ingress Controller (if not present)
+        run: |
+          kubectl get ns ingress-nginx || kubectl create ns ingress-nginx
+      
+          helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+          helm repo update
+      
+          helm upgrade --install nginx-ingress ingress-nginx/ingress-nginx \
+            --namespace ingress-nginx \
+            --set controller.service.type=NodePort
 
       - name: Replace image in deployment.yaml and apply manifests
         run: |
