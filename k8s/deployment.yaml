@@ -13,8 +13,8 @@ spec:
         app: wisecow
     spec:
       containers:
-        - name: wisecow
-          image: <ECR_REPOSITORY>:latest
+        - name: $IMAGE_TAG:latest
           ports:
             - containerPort: 4499
+
 
