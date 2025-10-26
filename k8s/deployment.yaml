@@ -13,8 +13,9 @@ spec:
         app: wisecow
     spec:
       containers:
-        - name: $IMAGE_TAG:latest
+        - name: $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           ports:
             - containerPort: 4499
+
 
 
