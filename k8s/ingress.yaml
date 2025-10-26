@@ -3,8 +3,10 @@ kind: Ingress
 metadata:
   name: wisecow-ingress
   annotations:
-    spec.ingressClassName: nginx
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
+  ingressClassName: nginx
   tls:
     - hosts:
         - wisecow.local
@@ -20,4 +22,5 @@ spec:
                 name: wisecow-service
                 port:
                   number: 80
+
 
