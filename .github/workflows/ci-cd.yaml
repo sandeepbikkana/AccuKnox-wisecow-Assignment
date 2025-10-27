@@ -42,8 +42,18 @@ jobs:
         run: aws eks update-kubeconfig --region $AWS_REGION --name $EKS_CLUSTER_NAME
       - name: Install NGINX Ingress Controller (if not present)
         run: |
-          kubectl create namespace ingress-nginx
+          - name: Install NGINX Ingress Controller (with Admission Controller)
+       
+          # Ensure namespace exists
+          kubectl get ns ingress-nginx || kubectl create ns ingress-nginx
+      
+          # Apply official NGINX ingress controller (includes admission controller)
           kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/cloud/deploy.yaml
+      
+          # Wait for both controller and admission webhook to be ready
+          echo "Waiting for NGINX ingress controller and admission webhook to be ready..."
+          kubectl rollout status deployment/ingress-nginx-controller -n ingress-nginx --timeout=180s
+          kubectl rollout status deployment/ingress-nginx-admission -n ingress-nginx --timeout=180s
 
       - name: Replace image in deployment.yaml and apply manifests
         run: |
