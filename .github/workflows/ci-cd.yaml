@@ -42,8 +42,6 @@ jobs:
         run: aws eks update-kubeconfig --region $AWS_REGION --name $EKS_CLUSTER_NAME
       - name: Install NGINX Ingress Controller (if not present)
         run: |
-          - name: Install NGINX Ingress Controller (with Admission Controller)
-       
           # Ensure namespace exists
           kubectl get ns ingress-nginx || kubectl create ns ingress-nginx
       
