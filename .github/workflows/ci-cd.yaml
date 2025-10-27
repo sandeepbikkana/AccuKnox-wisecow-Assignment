@@ -1,4 +1,4 @@
-name: Wisecow CI-CD to EKS
+name: Wisecow CI/CD to EKS
 
 on:
   push:
@@ -40,18 +40,20 @@ jobs:
 
       - name: Update kubeconfig for EKS
         run: aws eks update-kubeconfig --region $AWS_REGION --name $EKS_CLUSTER_NAME
-      - name: Install NGINX Ingress Controller (if not present)
+      - name: Install NGINX Ingress Controller
         run: |
-          # Ensure namespace exists
-          kubectl get ns ingress-nginx || kubectl create ns ingress-nginx
-      
-          # Apply official NGINX ingress controller (includes admission controller)
+          echo "🔹 Ensuring ingress-nginx namespace exists..."
+          kubectl get ns ingress-nginx >/dev/null 2>&1 || kubectl create ns ingress-nginx
+
+          echo "🔹 Installing NGINX Ingress Controller (with Admission Webhook)..."
           kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/cloud/deploy.yaml
-      
-          # Wait for both controller and admission webhook to be ready
-          echo "Waiting for NGINX ingress controller and admission webhook to be ready..."
+
+          echo "⏳ Waiting for ingress-nginx controller pods to be ready..."
           kubectl rollout status deployment/ingress-nginx-controller -n ingress-nginx --timeout=180s
-          kubectl rollout status deployment/ingress-nginx-admission -n ingress-nginx --timeout=180s
+
+          echo "✅ NGINX Ingress Controller is up and running!"
+
+          
 
       - name: Replace image in deployment.yaml and apply manifests
         run: |
@@ -59,3 +61,4 @@ jobs:
           kubectl apply -f k8s/deployment.yaml
           kubectl apply -f k8s/service.yaml
           kubectl apply -f k8s/ingress.yaml
+
