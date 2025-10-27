@@ -1,0 +1,26 @@
+apiVersion: security.kubearmor.com/v1
+kind: KubeArmorPolicy
+metadata:
+  name: wisecow-zero-trust
+  namespace: default
+spec:
+  severity: 5
+  message: "Zero Trust Policy - Block unauthorized file/network/process access"
+  selector:
+    matchLabels:
+      app: wisecow
+  file:
+    matchDirectories:
+      - dir: /etc/
+        recursive: true
+    action: Block
+  process:
+    matchPaths:
+      - path: /bin/sh
+      - path: /bin/bash
+    action: Block
+  network:
+    matchProtocols:
+      - protocol: TCP
+        action: Block
+
